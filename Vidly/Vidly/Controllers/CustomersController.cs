@@ -7,11 +7,26 @@ using System.Net.Http;
 using System.Web.Http;
 using System.Web.Mvc;
 using Vidly.Models;
+using Vidly.ViewModels;
 
 namespace Vidly.Controllers
 {
     public class CustomersController : Controller
     {
+        public ActionResult New()
+        {
+            List<MembershipType> membershipTypes;
+            using (var context = new ApplicationDbContext())
+            {
+                membershipTypes = context.MembershipTypes.ToList();
+            }
+
+            var viewModel = new NewCustomerViewModel
+            {
+                MembershipTypes = membershipTypes
+            };
+            return View(viewModel);
+        }
         public ActionResult Index()
         {
             List<Customer> customers;
@@ -39,6 +54,12 @@ namespace Vidly.Controllers
                 return HttpNotFound();
 
             return View(customer);
+        }
+
+        [HttpPost]
+        public ActionResult Create(Customer customer)
+        {
+
         }
     }
 }
