@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Data.Entity;
 using System.Net;
 using System.Net.Http;
 using System.Web.Http;
@@ -16,7 +17,9 @@ namespace Vidly.Controllers
             List<Customer> customers;
             using (var context = new ApplicationDbContext())
             {
-                customers = context.Customers.ToList();
+                customers = context.Customers
+                                   .Include(c=>c.MembershipType)
+                                   .ToList();
             }
 
             return View(customers);
@@ -27,7 +30,9 @@ namespace Vidly.Controllers
             Customer customer;
             using (var context = new ApplicationDbContext())
             {
-                customer = context.Customers.SingleOrDefault(c => c.Id == id);
+                customer = context.Customers
+                                  .Include(c=>c.MembershipType)
+                                  .SingleOrDefault(c => c.Id == id);
             }
 
             if (customer == null)
