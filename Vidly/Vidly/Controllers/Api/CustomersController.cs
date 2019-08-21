@@ -1,8 +1,7 @@
-﻿using System;
-using AutoMapper;
+﻿using AutoMapper;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Security.Policy;
 using System.Web.Http;
 using Vidly.Dtos;
 using Vidly.Models;
@@ -18,12 +17,19 @@ namespace Vidly.Controllers.Api
             _context = new ApplicationDbContext();
         }
 
-        public IEnumerable<CustomerDto> GetCustomers()
+        protected override void Dispose(bool disposing)
+        {
+            _context.Dispose();
+        }
+
+        public IHttpActionResult GetCustomers()
         {
 
-            return _context.Customers
+            var customerDtos = _context.Customers
                            .ToList()
                            .Select(Mapper.Map<Customer, CustomerDto>);
+
+            return Ok(customerDtos);
         }
 
         public IHttpActionResult GetCustomer(int id)
@@ -56,42 +62,40 @@ namespace Vidly.Controllers.Api
         }
 
         [HttpPut]
-        public void UpdateCustomer(int id, CustomerDto customerDto)
+        public IHttpActionResult UpdateCustomer(int id, CustomerDto customerDto)
         {
             if (!ModelState.IsValid)
             {
-                throw new HttpResponseException(System.Net.HttpStatusCode.BadRequest);
+                return BadRequest();
             }
 
             var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
             if (customerInDb == null)
             {
-                throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                return NotFound();
             }
 
             // customerIdDb is loaded into context.
             Mapper.Map<CustomerDto, Customer>(customerDto, customerInDb);
 
             _context.SaveChanges();
+
+            return Ok();
         }
 
         [HttpDelete]
-        public void DeleteCustomer(int id)
+        public IHttpActionResult DeleteCustomer(int id)
         {
-            if (!ModelState.IsValid)
-            {
-                throw new HttpResponseException(System.Net.HttpStatusCode.BadRequest);
-            }
-
             var customerInDb = _context.Customers.SingleOrDefault(c => c.Id == id);
             if (customerInDb == null)
             {
-                throw new HttpResponseException(System.Net.HttpStatusCode.NotFound);
+                return NotFound();
             }
 
             _context.Customers.Remove(customerInDb);
             _context.SaveChanges();
-        }
 
+            return Ok();
+        }
     }
 }
