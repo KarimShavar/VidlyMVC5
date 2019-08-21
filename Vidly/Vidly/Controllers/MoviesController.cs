@@ -1,9 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Data.Entity;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Web.Mvc;
 using Vidly.Models;
 using Vidly.ViewModels;
@@ -26,20 +23,20 @@ namespace Vidly.Controllers
 
         public ActionResult Index()
         {
-             var movies = _context.Movies.Include(m => m.Genre).ToList();
+            var movies = _context.Movies.Include(m => m.Genre).ToList();
             return View(movies);
         }
 
         public ActionResult Details(int id)
         {
-             var movie = _context.Movies.Include(m => m.Genre).SingleOrDefault(m => m.Id == id);
+            var movie = _context.Movies.Include(m => m.Genre).SingleOrDefault(m => m.Id == id);
             return View(movie);
         }
 
         public ActionResult NewMovie()
         {
             var genres = _context.Genres.ToList();
-            var viewModel = new MovieFormViewModel
+            var viewModel = new MovieFormViewModel()
             {
                 Genres = genres
             };
@@ -48,8 +45,18 @@ namespace Vidly.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Save(Movie movie)
         {
+            if (!ModelState.IsValid)
+            {
+                var viewModel = new MovieFormViewModel(movie)
+                {
+                    Genres = _context.Genres.ToList()
+                };
+                return View("MovieForm", viewModel);
+            }
+
             if (movie.Id == 0)
             {
                 movie.DateAdded = DateTime.UtcNow;
@@ -74,14 +81,13 @@ namespace Vidly.Controllers
         {
             var movie = _context.Movies.SingleOrDefault(c => c.Id == id);
 
-            if(movie == null)
+            if (movie == null)
             {
                 return HttpNotFound();
             }
 
-            var viewModel = new MovieFormViewModel
+            var viewModel = new MovieFormViewModel(movie)
             {
-                Movie = movie,
                 Genres = _context.Genres.ToList()
             };
 
