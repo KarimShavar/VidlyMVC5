@@ -243,6 +243,10 @@
     <Compile Include="Migrations\201908172124012_PopulateGenreType.Designer.cs">
       <DependentUpon>201908172124012_PopulateGenreType.cs</DependentUpon>
     </Compile>
+    <Compile Include="Migrations\201908232129026_GenreIdChangedToByteFromShort.cs" />
+    <Compile Include="Migrations\201908232129026_GenreIdChangedToByteFromShort.Designer.cs">
+      <DependentUpon>201908232129026_GenreIdChangedToByteFromShort.cs</DependentUpon>
+    </Compile>
     <Compile Include="Migrations\Configuration.cs" />
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\Customer.cs" />
@@ -555,6 +559,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Migrations\201908172124012_PopulateGenreType.resx">
       <DependentUpon>201908172124012_PopulateGenreType.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Migrations\201908232129026_GenreIdChangedToByteFromShort.resx">
+      <DependentUpon>201908232129026_GenreIdChangedToByteFromShort.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <PropertyGroup>
